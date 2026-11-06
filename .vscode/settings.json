@@ -1,3 +1,4 @@
 {
-  "python.defaultInterpreterPath": "D:\\dev\\Python311\\python.exe"
+  "python.defaultInterpreterPath": "D:\\dev\\Python311\\python.exe",
+  "python.terminal.useEnvFile": true
 }
