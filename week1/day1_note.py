@@ -13,4 +13,4 @@ response = client.chat.completions.create(
 )
 # 向模型发送对话请求，指定模型、用户提问内容
 print(response.choices[0].message.content)
-# 提取模型返回的回答文本，打印输出到终端
+# 提取模型返回的回答文本，打印输出到终端# print() 把括号里的内容输出到终端
