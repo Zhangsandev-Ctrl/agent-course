@@ -11,14 +11,15 @@
 #- 循环里用 `input()` 获取输入
 #- 判断如果输入等于 `"q"`，就 `break`
 #- 不是 q，就用 `.append()` 添加到列表
-name_list = []# 1. 先建一个空列表，用来放名字
+#name_list = []# 1. 先建一个空列表，用来放名字
 # 2. while 循环，条件写 True 代表无限循环，需要靠break退出
-while True:
-    name=input('请输入学生名字,输入q结束录入:')# 3. 获取用户输入
-    if name =='q':# 4. 判断：如果输入的是q，就break跳出循环
-        break
-    name_list.append(name)# 5. 不是q，就把名字加到列表里面
-print('全部学生名单：',name_list)# 6. 循环结束之后，打印全部名单
+#while True:
+    
+    #name=input('请输入学生名字,输入q结束录入:')# 3. 获取用户输入
+    #if name =='q':# 4. 判断：如果输入的是q，就break跳出循环
+        #break
+    #name_list.append(name)# 5. 不是q，就把名字加到列表里面
+#print('全部学生名单：',name_list)# 6. 循环结束之后，打印全部名单
 #**同时录入名字和分数**
 
 #1. 两个空列表：`name_list = []`、`score_list = []`
@@ -32,8 +33,8 @@ while True:
     name=input('请输入学生名字：')
     if name=='q':
         break
-        score=input('请输入学生分数：')
-        score=int(score)
+    score=input('请输入学生分数：')
+    score=int(score)
     name_list.append(name)
     score_list.append(score)
 for i in range(len(name_list)):
