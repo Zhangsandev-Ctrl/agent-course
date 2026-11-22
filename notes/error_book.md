@@ -322,3 +322,27 @@ JSONDecodeError：专门用来捕获 json 文件内容错乱（比如手动改�
 - **storage.py**：只负责 JSON 读写；
 - **ledger.py**：只操作列表，return 布尔值，不直接保存文件；
 - **main.py**：交互入口，依据返回值决定是否持久化。
+
+## D14 错题记录（JSON 容错重构）
+
+### 报错1：TypeError: 'NoneType' object is not iterable
+- 报错原文：`TypeError: 'NoneType' object is not iterable`
+- 原因分析：JSON 损坏分支返回 `None`，main 里判断 `record_list is None` 后没有 `exit()` 阻断，代码继续进入菜单，把 `None` 传给 `show_all` 做 for 循环遍历
+- 正确写法：检测到 `None` 立刻 `exit()` 终止后续代码；D14 重构后损坏分支改为备份文件并返回空列表，不再返回 `None`
+- 关联知识点：异常分支返回值、变量作用域、for 遍历对象必须是可迭代类型
+
+### 报错2：清理脏数据时把全部数据清空
+- 现象：执行脏数据清理后，账本所有正常记录一起消失
+- 原因分析：`JSONDecodeError` 分支直接返回空列表，随后触发自动 `save_records` 覆盖写入；或校验条件里 key 名和 JSON 字段对不上（如 `type` vs `r_type`），合法记录被全部误判为脏数据
+- 正确写法：文件损坏时禁止直接覆盖写入；校验 key 名必须与 JSON 字段一致；清理前先逐条打印确认哪些记录被判脏
+- 关联知识点：脏数据逐条过滤、文件备份策略、数据安全兜底
+
+### 报错3：解包报错 not enough values to unpack
+- 报错原文：`ValueError: not enough values to unpack (expected 2, got 1)`
+- 原因分析：`load_records` 各异常分支 return 的值个数不一致，有的只返回列表，有的返回 `(列表, 脏数据条数)`，main 解包时数量对不上
+- 正确写法：所有出口统一返回成对的 `(record_list, dirty_count)`
+- 关联知识点：函数多返回值、元组解包
+
+### 非报错坑点
+1. `os` 模块必须先 `import os`，否则 `os.rename` 报 `NameError`；`json` 模块管 JSON 解析，`os` 模块管文件改名/路径操作。
+2. 损坏文件先 `.bak` 备份再重建空账本，不能直接删除覆盖，防止误删可恢复的历史数据。
