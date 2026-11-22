@@ -1,7 +1,10 @@
 from storage import load_records, save_records
 from ledger import add_record, show_all, calc_balance, delete_record, xiugai_records
 def main():
-    record_list = load_records()
+    record_list,dirty_count = load_records()
+    if dirty_count > 0:
+        save_records(record_list)
+        print(f"✅ 检测到 {dirty_count} 条脏账目，已经自动清理")
     while True:
         print("\n=====个人账本=====")
         print("1.新增收支")
@@ -58,5 +61,9 @@ def main():
             break
         else:
             print("❌ 输入错误，请重新选择！")
+
 if __name__ == "__main__":
     main()
+# - **storage.py**：只负责 JSON 读写；
+# - **ledger.py**：只操作列表，return 布尔值，不直接保存文件；
+# - **main.py**：交互入口，依据返回值决定是否持久化。

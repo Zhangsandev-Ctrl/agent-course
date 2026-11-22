@@ -26,7 +26,6 @@
 # show_all(record_list)
 # income, out, bal = calc_balance(record_list)
 # print(f"总收入：{income}，总支出：{out}，余额：{bal}")
-import json
 def add_record(record_list, r_type, money, remark):#字典 `{"type":"收入/支出","money":金额,"remark":"备注"}`
     new_record={"type":r_type,
                 "money":money,

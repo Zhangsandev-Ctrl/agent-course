@@ -4,6 +4,7 @@ def add_record(record_list, r_type, money, remark):#新增账目
               "remark":remark
               }
     record_list.append(new_item)
+    return True
 
 def show_all(record_list):#查看全部账目
     print("=====全部账目=====")

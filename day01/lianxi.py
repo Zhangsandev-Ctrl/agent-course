@@ -56,7 +56,6 @@ for i in range(len(name_list)):
         else:
             level = "优秀"
         print(f'{name}:{score}分,评级:{level}')
-        break
 if not has_find:
     print('未查到此人！')
             

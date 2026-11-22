@@ -46,3 +46,33 @@ print(name[0])#索引[0]:第一个字符在下标 0（从 0 数，不从 1 数�
 print(name[0:3])#切片
 info=f'姓名：{name}\n长度:{len(name)}\n首字符:{name[0]}'
 print(info)
+
+#核心目标：学会 4 个高频字符串方法，掌握整除`//`、取余`%`、乘方`**`，为 BMI 作业打基础
+#红线：手敲每一行，不要复制；改参数反复看输出，把现象记下来
+# strip() 去除字符串首尾空格（输入场景超级常用）
+msg=input('suibian')
+print(msg)
+print(msg.strip())
+# upper() 全部转为大写；lower() 全部转为小写
+print(msg.strip().upper())
+print(msg.strip().lower())
+print(msg.split())
+
+height = float(input("请输入身高（米）："))
+print(height, type(height))
+
+# / 普通除法，结果是小数
+print(7 / 2)
+# // 整除：只保留整数部分，舍弃小数
+print(7 // 2)
+# % 取余数：除法剩下的余数
+print(7 % 2)
+# ** 乘方，7的2次方 = 7*7
+print(7 ** 2)
+
+n=input("请用户输入数字：")
+n= int(n)
+if n%2==0:
+    print("偶数")
+else:
+    print("奇数")
