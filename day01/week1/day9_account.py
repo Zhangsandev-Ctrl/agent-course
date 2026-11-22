@@ -26,6 +26,7 @@
 # show_all(record_list)
 # income, out, bal = calc_balance(record_list)
 # print(f"总收入：{income}，总支出：{out}，余额：{bal}")
+import json
 def add_record(record_list, r_type, money, remark):#字典 `{"type":"收入/支出","money":金额,"remark":"备注"}`
     new_record={"type":r_type,
                 "money":money,
@@ -47,7 +48,7 @@ def calc_balance(record_list):
     balance = total_income - total_out
     return total_income, total_out, balance
 def save_records(record_list):
-    with open("account.txt","a",encoding="utf-8")as f:#- `"w"`：覆盖写入；"a"`：追加写入；"r"`：读取文件。
+    with open("account.txt","w",encoding="utf-8")as f:#- `"w"`：覆盖写入；"a"`：追加写入；"r"`：读取文件。
         for item in (record_list):
             line = f'{item["type"]},{item["money"]},{item["remark"]}\n'
             f.write(line)
@@ -84,6 +85,7 @@ def  delete_record(record_list):
                 del record_list[index]
                 save_records(record_list)
                 print("✅ 删除成功！")
+                save_records(record_list)
             else:
                 print("❌ 已取消删除")
         else:
@@ -105,9 +107,12 @@ while True:
         try:
             money = float(money_try)
             remark=input("请输入备注：")
-            add_record(record_list, r_type, money, remark)
-            save_records(record_list)# 新增完成，自动保存
-            print("✅ 添加成功！")
+            if remark.strip() == "":
+                print("❌ 备注不能为空！")
+            else:
+                add_record(record_list, r_type, money, remark)
+                save_records(record_list)# 新增完成，自动保存
+                print("✅ 添加成功！")
         except:
             print("❌ 金额必须输入数字，添加失败！")
     elif choice == "2":

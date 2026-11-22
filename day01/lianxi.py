@@ -1,45 +1,81 @@
-## 基础题（1、2，巩固 print + 变量）
+## 题目 1（基础）
+#遍历这两个列表，打印每一个人的名字 + 分数，格式示例：`张三：92分`
+## 题目 2（查找，必练 flag）
+#输入一个完整姓名，程序去循环查找：
+#- 找到：打印这个人的分数
+#- 找不到：只打印一次「没有找到该学生」
+## 题目 3（按姓氏查找，今天重点）
+#输入一个姓氏，把所有这个姓氏的学生全部打印出来；没有就提示「没有这个姓氏的学生」
+## 题目 4（拓展，结合之前 if 分级）
+#在题目 3 基础上，查到学生之后，额外输出评级：
+#- ≥90：优秀
+#- 80~89：良好
+#- 60~79：及格
+#- <60：不及格
+## 题目 1（基础）
+#遍历这两个列表，打印每一个人的名字 + 分数，格式示例：`张三：92分`
+name_list = ["张三","李四","王五","赵六","张小花","李磊"]
+score_list = [92, 55, 78, 83, 67, 89]
+for i in range(len(name_list)):
+    print(f'{name_list[i]}的分数：{score_list[i]}')
 
-#1. 定义变量 `name` 存你的名字，变量 `age` 存你的年龄，用 print 打印一句话：`我叫XXX，今年XX岁`
-#2. 定义两个变量 a=10，b=20，用 print 分别打印 a+b 的结果、a-b 的结果
 
-# 第1题：名字+年龄
-name = "张同学"
-age = 18
-print("你好，我叫", name, "今年", age, "岁")
-
-# 第2题：a b 加减计算
-a = 10
-b = 20
-print("a + b =", a + b)
-print("a - b =", a - b)
-## 进阶题（3、4，自定义函数 def）
-
-#3. 写一个函数 `say_hello()`，函数内部用 print 输出 `欢迎学习Agent开发`，调用这个函数，让程序运行时打印这句话
-#4. 写函数 `calc_sum()`，里面设置 x=6，y=7，打印 x+y 的结果；调用函数
-#第3题：调用函数
-#def say_hello():
-    #print("欢迎学习Agent开发")
-#say_hello()
-#第4题：写函数 `calc_sum()`，里面设置 x=6，y=7，打印 x+y 的结果；调用函数
-#def calc_sum():
-    x=6
-    y=7
-    #print(x+y)
-#calc_sum()
-## 拔高题（5，if 分支，融合前面所有知识点）
-
-#5. 定义变量 score，赋值为 75，写判断逻辑：
-score=59
-if score>100 or score<0:
-    print("报错提示：输入有误请重新输入")
-elif score>=90:
-    print("优秀")
-elif score>=80:
-    print("良好")
-elif score>=60:
-    print("及格")
-else :
-    print("不及格")
-#附加思考题第 6 题（多分支，融合前面所有知识点）改造第 5 题，升级多分支：> =90 → 优秀; > =80 → 良好;>=60 及格 ；<60 不及格
-
+## 题目 2（查找，必练 flag）
+#输入一个完整姓名，程序去循环查找：
+#- 找到：打印这个人的分数
+#- 找不到：只打印一次「没有找到该学生」
+name_list = ["张三","李四","王五","赵六","张小花","李磊"]
+score_list = [92, 55, 78, 83, 67, 89]
+input_name=input('请输入名字：')
+for i in range(len(name_list)):
+    if name_list[i]==input_name:
+        print(f'{input_name}的分数是：{score_list[i]}')
+        break  # 找到就跳出循环，不用继续找了
+else:
+    print('查无此人')
+#在题目 3 基础上，查到学生之后，额外输出评级：
+#- ≥90：优秀
+#- 80~89：良好
+#- 60~79：及格
+#- <60：不及格
+name_list = ["张三","李四","王五","赵六","张小花","李磊"]
+score_list = [92, 55, 78, 83, 67, 89]
+input_xing=input('请输入姓氏：')
+has_find=False
+for i in range(len(name_list)):
+    name=name_list[i]
+    score=score_list[i]
+    if name[0]==input_xing:
+        has_find=True
+        if score<60:
+            level = "不及格"
+        elif score<80:
+            level = "及格"
+        elif score<90:
+            level = "良好"
+        else:
+            level = "优秀"
+        print(f'{name}:{score}分,评级:{level}')
+        break
+if not has_find:
+    print('未查到此人！')
+            
+#在题目 4 基础上，查到学生之后，额外输出评级：
+#- ≥90：优秀
+#- 80~89：良好
+#- 60~79：及格
+#- <60：不及格
+name_list = ["张三","李四","王五","赵六","张小花","李磊"]
+score_list = [92, 55, 78, 83, 67, 89]
+for i in range(len(name_list)):
+    name=name_list[i]
+    score=score_list[i]
+    if score<60:
+        level = "不及格"
+    elif score<80:
+        level = "及格"
+    elif score<90:
+        level = "良好"
+    else:
+        level = "优秀"
+    print(f'{name}:{score}分,评级:{level}')
