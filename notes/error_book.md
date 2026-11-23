@@ -346,3 +346,29 @@ JSONDecodeError：专门用来捕获 json 文件内容错乱（比如手动改�
 ### 非报错坑点
 1. `os` 模块必须先 `import os`，否则 `os.rename` 报 `NameError`；`json` 模块管 JSON 解析，`os` 模块管文件改名/路径操作。
 2. 损坏文件先 `.bak` 备份再重建空账本，不能直接删除覆盖，防止误删可恢复的历史数据。
+
+## D15 排错记录：程序启动读不到文件里的账单
+
+### 报错1：NameError，模块顶层残留调试代码
+- 报错原文：`NameError: name 'data' is not defined`（导入 storage 时直接崩溃）
+- 原因分析：调试用的 `print(data)`、`print(valid_list)` 写在了函数外面的模块顶层，`import storage` 时立刻执行，但 `data`、`valid_list` 从未定义
+- 正确写法：临时调试打印必须放在函数内部；调试完删除，不要留在模块顶层
+- 关联知识点：模块导入即执行顶层代码、变量作用域
+
+### 报错2：校验循环漏 append，且 return 写在 for 内部
+- 现象：文件 JSON 合法、记录正常，但加载出来列表永远是空的
+- 原因分析：遍历 `raw_list` 时，合法记录没有 `record_list.append(item)`；`return record_list, dirty_count` 写在 for 循环体内，第一条处理完就提前返回，后面记录不再遍历
+- 正确写法：`continue` 跳过脏数据，合法记录 `append` 进列表；`return` 必须放在 for 循环外面，全部遍历完再统一返回
+- 关联知识点：循环结构、函数返回时机、列表增删
+
+### 报错3：相对路径与运行目录不一致，找不到 account.json
+- 现象：代码在 `day01\week1\`，数据文件在项目根目录；从 week1 目录运行时，相对路径 `open("account.json")` 找不到文件，走 `FileNotFoundError` 返回空账本
+- 原因分析：相对路径依赖运行时的当前工作目录（cwd），代码文件和数据文件不在同一目录时就会找不到
+- 正确写法：用 `os.path.abspath(__file__)` 基于脚本自身位置逐级向上定位数据文件，不依赖 cwd；`os.path.exists` 先判断
+- 关联知识点：绝对路径/相对路径、`__file__`、os.path 模块
+
+### 报错4：形参拼写 recordf_list
+- 现象：`calc_balance(recordf_list)` 形参名多打字母 f，内部循环也跟着用这个错名
+- 原因分析：手误拼写，Python 把它当成另一个变量名；内部自洽时不报错，但可读性差、易引发后续 NameError
+- 正确写法：统一改回 `record_list`，变量名见名知义
+- 关联知识点：命名规范、变量拼写一致性

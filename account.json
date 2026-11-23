@@ -3,5 +3,10 @@
     "r_type": "收入",
     "money": 100.0,
     "remark": "1"
+  },
+  {
+    "r_type": "支出",
+    "money": 20.0,
+    "remark": "1"
   }
 ]
