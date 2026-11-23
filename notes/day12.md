@@ -5,28 +5,25 @@
 ### 核心知识点
 
 1. **JSON 是什么**
-JSON 是通用结构化文本格式，可以直接保存列表、字典，读取时`json.load()`直接还原成 Python 原生列表 / 字典，不需要手动切割字符串、自己设计分隔符，适合存账目这类结构化数据。
-2. **with 上下文管理器**
-打开文件，执行完毕或者中途报错时，**自动调用 close () 关闭文件**，不用手动写 close ()，避免文件句柄泄露、文件被占用。
-3. **文件打开模式 w /a**
+JSON 是通用结构化文本格式，可以直接保存列表、字典，读取时 `json.load()` 直接还原成 Python 原生列表 / 字典，不需要手动切割字符串、自己设计分隔符，适合存账目这类结构化数据。
 
+2. **with 上下文管理器**
+打开文件，执行完毕或者中途报错时，**自动调用 close() 关闭文件**，不用手动写 close()，避免文件句柄泄露、文件被占用。
+
+3. **文件打开模式 w / a**
 - `w`：覆盖写入，清空原有内容，写入全新数据；账本使用这个，每次保存写入完整账目列表，防止重复叠加。
 - `a`：追加写入，在文件末尾新增内容，不适合账本。
 
 4. **try-except 多分支捕获异常**
-从上往下依次匹配异常类型；匹配到某一个 except 之后，执行对应代码，直接跳出整个 try-except 结构，后面的 except 不会再执行。
-
-> 
-> ⚠️ 注意：大类异常`Exception`不能写在前面，否则后面细分异常永远捕获不到。
+从上往下依次匹配异常类型；匹配到某一个 `except` 之后，执行对应代码，直接跳出整个 try-except 结构，后面的 `except` 不会再执行。
+> ⚠️ 大类异常 `Exception` 不能写在前面，否则后面细分异常永远捕获不到。
 
 5. **常见异常**
-
 - `FileNotFoundError`：文件不存在
 - `json.JSONDecodeError`：JSON 文件格式损坏、内容非法
-- `UnboundLocalError`：函数内部分分支没有给变量赋值，使用变量的时候找不到这个变量
+- `UnboundLocalError`：函数内部分支没有给变量赋值，使用变量时找不到
 
-> 
-> 踩坑复盘：try 里写`date`，except 分支赋值`data`，return 写`date`；走异常分支时 date 不存在，直接报错。解决：保证所有分支路径变量都有初始值。
+> 踩坑复盘：try 里写 `date`，except 分支赋值 `data`，return 写 `date`；走异常分支时 `date` 不存在，直接报错。解决：保证所有分支路径变量都有初始值。
 
 ### 账本功能清单
 
@@ -38,33 +35,18 @@ JSON 是通用结构化文本格式，可以直接保存列表、字典，读取
 ✅ JSON 持久化保存，重启程序数据不丢失
 ✅ 异常兜底：文件缺失、JSON 损坏，返回空账本，程序不崩溃
 
-### 错题摘录（同步 error_book.md）
+### 错题摘录（详见 error_book.md）
 
-1. 报错：`UnboundLocalError`
-原因：代码分支不全，部分路径变量没有赋值，return 时找不到变量
-解决：所有分支都给变量赋初始值
-2. 报错：`NameError`
-原因：调用函数的代码写在函数定义之前，Python 从上到下顺序执行，必须先定义 def，再调用。
-3. 重复打印加载提示
-原因：多处调用`load_records()`，可以只在程序启动时加载一次，其他地方不再重复加载
+1. `UnboundLocalError`：分支不全，部分路径变量没赋值就 return。
+2. `NameError`：调用写在 `def` 定义之前，Python 自上而下执行。
+3. 重复打印加载提示：多处调用 `load_records()`，应只在启动时加载一次。
 
 ### 知识点复盘（方便口述自测）
 
-1. **json 模块**：`json.dump()` 把列表字典写入 json 文件；`json.load()` 从文件读取回 Python 对象
-2. **with 上下文管理器**：自动关闭文件，不用手动 close，不容易忘记释放文件句柄
-3. **多文件拆分思想**：`storage.py` 只负责读写文件，`ledger.py` 写业务函数，`main.py` 做菜单交互，解耦
-4. **changed 标记**：函数返回布尔值，只有数据真正改动时，才调用 save_records 写入文件，减少无效 IO
-5. **变量拼写坑**：Python 区分变量名，`record_list` 和 `recordf_list` 是两个不同变量，拼写错直接 NameError
+1. **json 模块**：`json.dump()` 把列表字典写入 json 文件；`json.load()` 从文件读取回 Python 对象。
+2. **with 上下文管理器**：自动关闭文件，不用手动 close，不容易忘记释放文件句柄。
+3. **多文件拆分思想**：`storage.py` 只负责读写文件，`ledger.py` 写业务函数，`main.py` 做菜单交互，解耦。
+4. **changed 标记**：函数返回布尔值，只有数据真正改动时，才调用 `save_records` 写入文件，减少无效 IO。
+5. **变量拼写坑**：Python 区分变量名，`record_list` 和 `recordf_list` 是两个不同变量，拼错直接 `NameError`。
 
-1. 看懂 JSON 嵌套结构（字典套字典、列表套字典）
-2. `json.dumps()` 的 `indent` 参数，格式化打印 json，方便看日志
-3. JSON 只支持：字符串、数字、列表、字典、bool、null；**不能直接存自定义对象**
-4. 账本数据合法性校验（在 save/load 前后做数据自检）
-5. 区分：`json.dump()`（写入文件） / `json.dumps()`（转字符串）
-区分：`json.load()`（从文件读） / `json.loads()`（字符串转对象）
-1. **dump /dumps 、load /loads 区别（高频口述考点）**
-
-- `json.dump(obj, f)`：Python 对象 → 写入文件（带文件句柄）
-- `json.dumps(obj)`：Python 对象 → json 字符串，用于打印、调试
-- `json.load(f)`：文件里的 json → Python 对象
-- `json.loads(json_str)`：json 字符串 → Python 对象
+> JSON 进阶（dump/dumps、load/loads、格式化、数据校验）已拆分到 `day13.md`。
