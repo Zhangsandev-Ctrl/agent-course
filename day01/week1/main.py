@@ -1,5 +1,6 @@
 from storage import load_records, save_records
 from ledger import add_record, show_all, calc_balance, delete_record, xiugai_records
+from utils import is_valid_money
 def main():
     record_list,dirty_count = load_records()
     if dirty_count > 0:
@@ -21,10 +22,10 @@ def main():
                     break
                 print("❌ 收支类型只能输入【收入】或者【支出】，请重新输入！")
             while True:
-                    money_try=(input("请输入金额："))
+                    money_try=input("请输入金额：")
                     try:
                         money = float(money_try)
-                        if money <= 0:
+                        if not is_valid_money(money):
                             print("❌ 金额必须大于0,请重新输入!")
                             continue
                         break

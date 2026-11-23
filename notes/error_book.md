@@ -372,3 +372,34 @@ JSONDecodeError：专门用来捕获 json 文件内容错乱（比如手动改�
 - 原因分析：手误拼写，Python 把它当成另一个变量名；内部自洽时不报错，但可读性差、易引发后续 NameError
 - 正确写法：统一改回 `record_list`，变量名见名知义
 - 关联知识点：命名规范、变量拼写一致性
+
+## D16 排错记录：模块拆分与缩进
+
+### 报错1：IndentationError 函数体未缩进
+- 报错原文：`IndentationError: expected an indented block after function definition on line 1`
+- 原因分析：新建 `utils.py` 写 `def is_valid_money(value):` 后，docstring 和 `return` 顶格写，没有缩进进函数体，def 后面缺少缩进块
+- 正确写法：函数定义下一行起，函数体统一缩进 4 个空格；docstring 和 return 都要在缩进内
+- 关联知识点：缩进规则、模块内函数定义
+
+### 报错2：新建文件 0 字节，代码未保存到磁盘
+- 现象：编辑器里写好了函数，但磁盘上 `utils.py` 大小为 0，全目录搜不到函数名引用
+- 原因分析：代码只存在 VSCode 缓冲区，没按 `Ctrl+S` 保存；Python 运行的是硬盘文件，缓冲区改动不生效
+- 正确写法：写完先保存，确认标签页未保存圆点消失，再运行测试
+- 关联知识点：文件保存、模块导入前置条件
+
+### 模块依赖核对（无报错）
+- 单向依赖：`main.py` → `storage.py` / `ledger.py` / `utils.py`；`storage`、`ledger`、`utils` 之间不互相导入，无循环导入
+- `requirements.txt`：记录第三方库（openai、python-dotenv、pydantic、httpx）；标准库 json/os 不用写入
+- `.gitignore`：忽略 `.env`、`__pycache__/`、`*.pyc`、`.venv/` 等，不提交缓存和环境文件
+
+### 报错3：NameError 局部变量名写错
+- 报错原文：`NameError: name 'money' is not defined`（ledger.py 修改函数第 112 行）
+- 原因分析：修改函数里金额变量叫 `new_money`，调用工具函数时误写成 `money`；`money` 是 `add_record` 的形参，不在这个函数作用域，访问不到
+- 正确写法：`if not is_valid_money(new_money):`，变量名必须和当前函数内定义的一致
+- 关联知识点：局部变量作用域、变量命名一致性
+
+### 报错4：校验分支写反，try 里混入判断
+- 现象：金额非法时反而 `break` 退出循环，合法提示和放行顺序颠倒
+- 原因分析：`if not is_valid_money(...)` 为 True 表示非法，应当 `print + continue`；只有判断通过才 `break`。`float()` 转换和合法性判断应拆开：转换失败走 `except ValueError`，转换成功后再判断
+- 正确写法：try 只做 `float()`；`except` 里 `continue`；循环外 `if not 合法: print + continue`，最后 `break`
+- 关联知识点：while 输入校验、try/except 边界、工具函数复用

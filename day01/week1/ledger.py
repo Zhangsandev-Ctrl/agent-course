@@ -1,3 +1,4 @@
+from utils import is_valid_money
 def add_record(record_list, r_type, money, remark):#新增账目
     """新增一条账目记录
 
@@ -108,11 +109,13 @@ def xiugai_records(record_list):
             while True:
                 try:
                     new_money = float(input("请输入新金额：").strip())
-                    if new_money > 0:
-                        break
-                    print("❌ 金额必须大于0！")
                 except ValueError:
                     print("❌ 金额必须是数字！")
+                    continue
+                if not is_valid_money(new_money):
+                    print("❌ 金额必须大于0！")
+                    continue
+                break
             
             # 备注while校验
             while True:
