@@ -20,6 +20,9 @@
 | 数据不持久化 | 改完内存没调 `save_records` | D9、D12 |
 | 清理脏数据全被清空 | 损坏分支直接覆盖写 | D14 |
 | 读不到账本文件 | 相对路径依赖启动目录 | D15 |
+| `ZeroDivisionError` | 除数为 0，需单独捕获 | D19 |
+| `ValueError` 抓不到 | 类型转换写在 try 外面，except 管不着 | D19 |
+| finally 里写 break / return | 必执行的收尾块里改流程，强行跳出循环或覆盖返回值 | D19 |
 
 ---
 
@@ -258,6 +261,28 @@
 - 原因分析：`if not is_valid_money(...)` 为 True 表示非法，应 `print + continue`；且 `float()` 转换与合法性判断挤在同一个 try 里
 - 正确写法：try 只做 `float()`；`except ValueError` 里 `continue`；转换成功后 `if not 合法: print + continue`，最后 `break`
 - 关联知识点：while 输入校验、try 边界、工具函数复用
+
+---
+
+## D19 · 异常捕获 try-except-else-finally
+
+### 39. `[Errno 2] No such file or directory`（路径与命令不一致）
+- 报错原文：`can't open file '.\day01\week1\day19_yichang.py': [Errno 2] No such file or directory`
+- 原因分析：文件实际保存在 `day01\` 下，运行命令找的是 `day01\week1\` 下，少一层目录，Python 打不开文件（不是代码报错）
+- 正确写法：先 `Get-ChildItem` 确认文件实际位置，运行命令的相对路径与之对应；文件挪目录后同步改命令
+- 关联知识点：相对路径、运行目录 cwd
+
+### 40. `ValueError` 在函数外，except 抓不到
+- 报错原文：`ValueError: invalid literal for int() with base 10: 'abc'`，崩在 `x = int(input(...))`，traceback 直接到最外层
+- 原因分析：`input()` 和 `int()` 转换写在 try / 函数外面，except 只能捕获 try 内部抛出的异常，外面崩的它管不着
+- 正确写法：把输入、类型转换、运算一起放进同一个 try；输入字母时由 `except ValueError` 接住
+- 关联知识点：异常捕获范围、try 边界
+
+### 41. finally 里写 `break`，循环一轮就退出
+- 现象：除零或值错误打印完提示，程序直接退出，没法连续下一轮输入
+- 原因分析：`finally` 无论成功失败都执行，里面的 `break` 会强行跳出 `while`；finally 不负责循环控制
+- 正确写法：finally 只放收尾清理（打印结束提示、关文件、断连接），禁止放 `break` / `return` / `continue`；退出循环只由 try 里的判断负责
+- 关联知识点：finally 执行时机、流程控制语句禁区
 
 ---
 
